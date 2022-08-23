@@ -1,0 +1,19 @@
+<launch>
+	<arg name="launch_ouster_bag" default="true"/>
+	<arg name="launch_ouster" default="true"/>
+	<arg name="bagdir" default="/catkin_ws/data/"/>
+	<arg name="ouster_bagfile" default="ouster"/>
+	<!-- OUSTER -->
+	<group if="$(arg launch_ouster)">
+		<include file="$(find ouster_ros)/ouster.launch">
+			<arg name="sensor_hostname" 	value="192.168.100.50"/>
+			<arg name="udp_dest"        	value="192.168.100.1"/>
+			<arg name="lidar_mode"	    	value="1024x20"/>
+			<arg name="timestamp_mode"  	value="TIME_FROM_PTP_1588"/>
+			<arg name="metadata"	    	value="metadata"/>
+		</include>
+	</group>
+	<!-- ROSBAG RECORD -->
+	<node pkg="rosbag" type="record" name="rosbag_record" output="screen" if="$(arg launch_ouster_bag)"
+		args="/os_cloud_node/points /os_cloud_node/imu -o $(arg bagdir)$(arg ouster_bagfile)"/>
+</launch>
